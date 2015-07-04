@@ -1,0 +1,21 @@
+header.status div,
+section.swimlane div.status {
+  display: inline-block;
+  vertical-align: top;
+  width: 20em;
+  border-right: 1px solid gray;
+  height: 100%;
+}
+
+.issuegrid {
+  font-family: sans-serif;
+}
+
+header {
+  font-weight: bold;
+}
+
+header.status,
+section.swimlane {
+  border-top: 1px solid gray;
+}
