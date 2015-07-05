@@ -1,0 +1,45 @@
+{
+  "statusHeadings": ["open", "inprogress", "closed"],
+  "swimLanes": [
+    {
+      "title": "",
+      "statuses": [{
+        "title": "open"
+      },{
+        "title": "inprogress",
+        "issues": [{
+          "title": "task3",
+          "assignee": "platy"
+        }]
+      },{
+        "title": "closed"
+      }]
+    },
+    {
+      "title": "swimlane1",
+      "statuses": [{
+        "title": "open"
+      },{
+        "title": "inprogress"
+      },{
+        "title": "closed",
+        "issues": [{
+          "title": "task1"
+        }]
+      }]
+    },
+    {
+      "title": "swimlane2",
+      "statuses": [{
+        "title": "open",
+        "issues": [{
+          "title": "task2"
+        }]
+      },{
+        "title": "inprogress"
+      },{
+        "title": "closed"
+      }]
+    }
+  ]
+}

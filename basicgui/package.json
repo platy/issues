@@ -1,0 +1,14 @@
+{
+  "name": "basicgui",
+  "version": "1.0.0",
+  "description": "Displays project tasks from the filesystem",
+  "main": "index.js",
+  "scripts": {
+    "exampletemplate": "mustache exampledata.json templates/layout.html > output.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mustache": "^2.1.2"
+  }
+}
