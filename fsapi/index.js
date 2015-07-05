@@ -26,6 +26,10 @@ function orderLike(elements, order) {
   return ordered;
 }
 
+function isIssueFilename(filename) {
+  return !filename.startsWith('.');
+}
+
 const DEFAULT_STATUS_NAMES = ['open', 'inprogress', 'closed'];
 
 /** Interface with a project's issues from this class */
@@ -40,14 +44,14 @@ class ProjectIssues {
 
       function readStatusDir(statusDirNumber) {
         if(statusDirNumber == self._statusHeadings.length) {
-          self._swimLanes = Object.keys(swimLanes).map((swimLaneTitle) => new SwimLane(swimLaneTitle, swimLanes[swimLaneTitle]));
+          self._swimLanes = Object.keys(swimLanes).sort().map((swimLaneTitle) => new SwimLane(swimLaneTitle, swimLanes[swimLaneTitle]));
           callback(null, self);
         } else {
           const statusDirPath = path.join(issuesPath, self._statusHeadings[statusDirNumber]);
           fs.readdir(statusDirPath, function(err, issues) {
             if (err)
               callback(err);
-            issues.map((issueFileName) => new Issue(statusDirPath, issueFileName)).forEach((issue) => {
+            issues.filter(isIssueFilename).map((issueFileName) => new Issue(issuesPath, self._statusHeadings[statusDirNumber], issueFileName)).forEach((issue) => {
               const swimLane = swimLanes[issue.swimLane] || [];
               swimLane.push(issue);
               swimLanes[issue.swimLane] = swimLane;
@@ -72,45 +76,66 @@ class ProjectIssues {
 class SwimLane {
   constructor(swimLaneTitle, issues) {
     this._title = swimLaneTitle;
+    this._issues = issues;
   }
   /** Title of the swim lane */
   get title() {
     return this._title;
   }
   /** Iterable of all the tasks under this swim lane with the specified status */
-  get issuesWithStatus(status) {}
+  issuesWithStatus(status) {
+    return this._issues.filter((issue) => issue.status === status);
+  }
 }
 
 const LANE_SEPERATOR_CHAR = ':';
+const STATUS_SEPERATOR_CHAR = ':';
 
 function parseIssueFileName(fileName) {
-  const laneSep = fileName.indexOf(LANE_SEPERATOR_CHAR);
-  if(laneSep > 0) {
+  const bodyExtension = path.extname(fileName);
+  const basename = path.basename(fileName, bodyExtension);
+  if(fileName.indexOf(LANE_SEPERATOR_CHAR) >= 0) {
+    const [lanename, issuename] = fileName.split(LANE_SEPERATOR_CHAR)
     return {
-      swimLaneName: fileName.slice(0, laneSep).trim(),
-      issueName: fileName.slice(laneSep)
-    };
+      swimLaneName: lanename.trim(),
+      issueName: issuename.trim(),
+      bodyExtension
+    }
   } else {
     return {
       swimLaneName: '',
-      issueName: fileName
+      issueName: basename,
+      bodyExtension
     };
   }
 }
 
+function parseStatusDirname(dirname) {
+  const [status, assignee] = dirname.split(STATUS_SEPERATOR_CHAR);
+  return {status, assignee};
+}
+
 class Issue {
-  constructor(statusDirPath, issueFileName) {
+  constructor(issuesPath, statusDirname, issueFileName) {
     const {swimLaneName, issueName} = parseIssueFileName(issueFileName);
+    const {status, assignee} = parseStatusDirname(statusDirname);
     this._swimLaneName = swimLaneName;
     this._title = issueName;
+    this._status = status;
+    this._assignee = assignee;
   }
   get title() {
     return this._title;
   }
-  get assignee() {}
+  get assignee() {
+    return this._assignee;
+  }
   get bodyHtml() {}
   get swimLane() {
     return this._swimLaneName;
+  }
+  get status() {
+    return this._status;
   }
 }
 
