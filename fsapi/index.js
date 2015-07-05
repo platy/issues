@@ -1,5 +1,5 @@
-const fs = require('fs');
 const path = require('path');
+import {readTree} from './dirtree.js';
 
 function includes(elements, search) {
   for (var e of elements) {
@@ -36,31 +36,22 @@ const DEFAULT_STATUS_NAMES = ['open', 'inprogress', 'closed'];
 class ProjectIssues {
   constructor(issuesPath, callback) {
     const self = this;
-    fs.readdir(issuesPath, function(err, statusdirs) {
+    readTree(issuesPath, function(err, issuetree) {
+      const swimLanes = {};
       if (err)
         callback(err);
-      self._statusHeadings = orderLike(statusdirs, DEFAULT_STATUS_NAMES);
-      const swimLanes = {};
-
-      function readStatusDir(statusDirNumber) {
-        if(statusDirNumber == self._statusHeadings.length) {
-          self._swimLanes = Object.keys(swimLanes).sort().map((swimLaneTitle) => new SwimLane(swimLaneTitle, swimLanes[swimLaneTitle]));
-          callback(null, self);
-        } else {
-          const statusDirPath = path.join(issuesPath, self._statusHeadings[statusDirNumber]);
-          fs.readdir(statusDirPath, function(err, issues) {
-            if (err)
-              callback(err);
-            issues.filter(isIssueFilename).map((issueFileName) => new Issue(issuesPath, self._statusHeadings[statusDirNumber], issueFileName)).forEach((issue) => {
-              const swimLane = swimLanes[issue.swimLane] || [];
-              swimLane.push(issue);
-              swimLanes[issue.swimLane] = swimLane;
-            })
-            readStatusDir(statusDirNumber + 1);
-          });
-        }
-      }
-      readStatusDir(0);
+      self._statusHeadings = orderLike(issuetree.dirs.map((dir) => dir.name), DEFAULT_STATUS_NAMES);
+      issuetree.dirs.forEach(function (statusdir) {
+        statusdir.files.filter((file) => isIssueFilename(file.name)).map((issuefile) =>
+          new Issue(null, statusdir.name, issuefile.name)
+        ).forEach((issue) => {
+          const swimLane = swimLanes[issue.swimLane] || [];
+          swimLane.push(issue);
+          swimLanes[issue.swimLane] = swimLane;
+        })
+      });
+      self._swimLanes = Object.keys(swimLanes).sort().map((swimLaneTitle) => new SwimLane(swimLaneTitle, swimLanes[swimLaneTitle]));
+      callback(null, self);
     });
   }
   /** Returns the ordered iterable of all the status headings used in this project */
