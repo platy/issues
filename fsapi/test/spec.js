@@ -1,4 +1,4 @@
-import {issueLoader} from '../index.js'
+import {issueLoader} from '../src/index.js'
 const should = require('should');
 
 describe("fsapi over the test issues", function() {

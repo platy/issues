@@ -1,0 +1,17 @@
+{
+  "name": "issues-site-generator",
+  "version": "1.0.0",
+  "description": "Builds issues pages from project tasks on the filesystem",
+  "main": "index.js",
+  "scripts": {
+    "exampletemplate": "mustache exampledata.json templates/layout.html > output.html"
+  },
+  "bin": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "issues-fs-api": "../fsapi",
+    "mustache": "^2.1.2",
+    "node-handlebars": "^0.9.7"
+  }
+}

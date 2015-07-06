@@ -12,6 +12,8 @@ class SwimLane {
   get title() {}
   /** Iterable of all the tasks under this swim lane with the specified status */
   get issuesWithStatus(status) {}
+  /** Object associating statuses to the tasks */
+  get issuesByStatus() {}
 }
 
 class Issue {

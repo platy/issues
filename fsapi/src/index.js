@@ -40,16 +40,19 @@ class ProjectIssues {
       const swimLanes = {};
       if (err)
         callback(err);
-      self._statusHeadings = orderLike(issuetree.dirs.map((dir) => dir.name), DEFAULT_STATUS_NAMES);
+      self._statusHeadings = [];
       issuetree.dirs.forEach(function (statusdir) {
+        const {status, assignee} = parseStatusDirname(statusdir.name);
+        self._statusHeadings.push(status);
         statusdir.files.filter((file) => isIssueFilename(file.name)).map((issuefile) =>
-          new Issue(null, statusdir.name, issuefile.name)
+          new Issue(null, status, assignee, issuefile.name)
         ).forEach((issue) => {
           const swimLane = swimLanes[issue.swimLane] || [];
           swimLane.push(issue);
           swimLanes[issue.swimLane] = swimLane;
         })
       });
+      self._statusHeadings = orderLike(self._statusHeadings, DEFAULT_STATUS_NAMES);
       self._swimLanes = Object.keys(swimLanes).sort().map((swimLaneTitle) => new SwimLane(swimLaneTitle, swimLanes[swimLaneTitle]));
       callback(null, self);
     });
@@ -107,9 +110,8 @@ function parseStatusDirname(dirname) {
 }
 
 class Issue {
-  constructor(issuesPath, statusDirname, issueFileName) {
+  constructor(issuesPath, status, assignee, issueFileName) {
     const {swimLaneName, issueName} = parseIssueFileName(issueFileName);
-    const {status, assignee} = parseStatusDirname(statusDirname);
     this._swimLaneName = swimLaneName;
     this._title = issueName;
     this._status = status;

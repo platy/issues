@@ -25,6 +25,7 @@ export function readTree(basepath, callback) {
       fs.readdir(basepath, function(err, list) { // read the files
         if (err) return callback(err);
         var pending = list.length;
+        if (!pending) return callback(null, new Directory(basepath, []));
         var files = [];
         list.forEach(function(file) {
           readTree(path.join(basepath, file), function(err, res) {
