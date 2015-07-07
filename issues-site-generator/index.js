@@ -3,13 +3,17 @@
 var issueLoader = require('issues-fs-api').issueLoader;
 var handlebars = require('node-handlebars');
 var argv = require('process').argv;
+var fs = require('fs');
 
 var hbs = handlebars.create({
   partialsDir :__dirname + "/templates",
   minimize: false
  });
 
-issueLoader(argv[2], function(err, issues) {
+var indir = argv[2];
+var outdir = argv[3];
+
+issueLoader(indir, function(err, issues) {
   var convertedIssues = {
     statusHeadings: issues.statusHeadings,
     swimLanes: issues.swimLanes.map(function(lane) {
@@ -31,6 +35,20 @@ issueLoader(argv[2], function(err, issues) {
     if (err) {
       throw err;
     }
-    console.log(html);
+    if (outdir) {
+      fs.writeFile(outdir + '/issues.html', html, function (err) {
+        if (err) throw err;
+        console.log('Written board html');
+        fs.symlink(__dirname + '/static', outdir + '/static', function (err) {
+          if (err && !err.code == 'EEXIST') throw err;
+          if (err && err.code == 'EEXIST')
+            console.log("static already exists, skipping");
+          else
+            console.log('Linked static files');
+        })
+      });
+    } else {
+      console.log(html);
+    }
   });
 });
