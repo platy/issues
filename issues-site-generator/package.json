@@ -4,7 +4,7 @@
   "description": "Builds issues pages from project tasks on the filesystem",
   "main": "index.js",
   "scripts": {
-    "exampletemplate": "mustache exampledata.json templates/layout.html > output.html"
+    "example": "mustache exampledata.json templates/layout.html > example.html"
   },
   "bin": "index.js",
   "author": "",
