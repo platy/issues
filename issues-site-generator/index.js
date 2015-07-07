@@ -5,7 +5,8 @@ var handlebars = require('node-handlebars');
 var argv = require('process').argv;
 
 var hbs = handlebars.create({
-  partialsDir :__dirname + "/templates"
+  partialsDir :__dirname + "/templates",
+  minimize: false
  });
 
 issueLoader(argv[2], function(err, issues) {
