@@ -18,7 +18,9 @@ issueLoader(argv[2], function(err, issues) {
         statuses: issues.statusHeadings.map(function(statusHead) {
           return {
             title: statusHead,
-            issues: lane.issuesWithStatus(statusHead)
+            issues: lane.issuesWithStatus(statusHead).sort(function(a,b) {
+              return a.title > b.title;
+            })
           };
         })
       };
