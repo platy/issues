@@ -1,0 +1,3 @@
+- Pages per status with a simpler view
+- Overview page with counts
+- Links between them all
