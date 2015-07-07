@@ -1,4 +1,4 @@
-import {issueLoader} from '../src/index.js'
+import {issueLoader, parseIssueFileName} from '../src/index.js'
 const should = require('should');
 
 describe("fsapi over the test issues", function() {
@@ -27,4 +27,34 @@ describe("fsapi over the test issues", function() {
   it("parses the assignee from the status dir", function() {
     issues.swimLanes[0].issuesWithStatus('inprogress')[0].assignee.should.equal('platy');
   });
-})
+});
+
+describe('file name parsing', function() {
+  it('parses issue file names with no swimlane', function() {
+    const parsed = parseIssueFileName('name.md');
+    parsed.should.have.property('issueName', 'name');
+    parsed.should.have.property('swimLaneName', '');
+    parsed.should.have.property('bodyExtension', '.md');
+  });
+
+  it('parses issue file names with a swimlane', function() {
+    const parsed = parseIssueFileName('lane : name.md');
+    parsed.should.have.property('issueName', 'name');
+    parsed.should.have.property('swimLaneName', 'lane');
+    parsed.should.have.property('bodyExtension', '.md');
+  });
+
+  it('parses issue file names with a swimlane and extra separator', function() {
+    const parsed = parseIssueFileName('lane : name : something.md');
+    parsed.should.have.property('issueName', 'name : something');
+    parsed.should.have.property('swimLaneName', 'lane');
+    parsed.should.have.property('bodyExtension', '.md');
+  });
+
+  it('parses issue file names with a fake swimlane to enable separator in name', function() {
+    const parsed = parseIssueFileName(': name : something.md');
+    parsed.should.have.property('issueName', 'name : something');
+    parsed.should.have.property('swimLaneName', '');
+    parsed.should.have.property('bodyExtension', '.md');
+  });
+});

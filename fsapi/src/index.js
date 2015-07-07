@@ -85,11 +85,11 @@ class SwimLane {
 const LANE_SEPERATOR_CHAR = ':';
 const STATUS_SEPERATOR_CHAR = ':';
 
-function parseIssueFileName(fileName) {
+export function parseIssueFileName(fileName) {
   const bodyExtension = path.extname(fileName);
   const basename = path.basename(fileName, bodyExtension);
   if(fileName.indexOf(LANE_SEPERATOR_CHAR) >= 0) {
-    const [lanename, issuename] = fileName.split(LANE_SEPERATOR_CHAR)
+    const [lanename, issuename] = basename.split(/:(.+)/, 2)
     return {
       swimLaneName: lanename.trim(),
       issueName: issuename.trim(),
