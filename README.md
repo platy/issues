@@ -7,7 +7,8 @@ This project is an a attempt to specify an open and human readable distributed i
 ## Database Features:
 
 - Can be stored within the project repository (either within the main project branch or in an orphan branch)
-- Usable without any application
+- Status can be verified with hooks - (eg. PR can only be merged if no task is in the state : 'in progress')
+- Usable without any application - just text editor and file manager
 - Usable offline
 - Markdown issue bodies
 
@@ -31,6 +32,8 @@ This project is an a attempt to specify an open and human readable distributed i
 - Text editor plugins for collaborators
 - Notifications for assigned (/watched?) issues : maybe a git hook for the first version?
 - Status page generators : maybe in jekyll
+- Validator (only if some issue trees will not be valid)
+- Changelog generator : probably add a grouping for release (maybe only in the end states) and then specify parts of the issue text that would appear in the generated changelog from it.
 
 ## Directory structure example
 
@@ -58,4 +61,4 @@ project
 - The tasks for this project [issues/](issues)
 - A node library to access an issues db on the fs [fsapi/](fsapi)
 - An static issue board html generator using fsapi [issues-site-generator/](issues-site-generator)
-- A generated issue board hosted on github pages [issue board](http://emberexperiments.co/issues/issues.html)
+- A generated issue board hosted on github pages [issue board](https://platy.github.io/issues/issues.html)
